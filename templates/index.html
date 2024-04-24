@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nmap UI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #212121;
+            color: #ffffff;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #ffffff;
+            text-align: center;
+        }
+
+        .option-group label,
+        .option-group input[type="checkbox"] {
+            display: inline-block;
+            margin-right: 10px;
+            color: #ffffff;
+        }
+        
+        .option-row {
+            margin-bottom: 10px;
+        }
+
+        .option-row::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        .option {
+            width: calc(20% - 100px);
+            float: left;
+        }
+        
+        .tooltip {
+            display: inline-block;
+            cursor: pointer;
+            text-decoration: underline;
+            margin-top: 10px;
+            color: #64b5f6;
+        }
+        
+        .tooltip-content {
+            display: none;
+            margin-top: 5px;
+            color: #ffffff;
+        }
+
+        button[type="button"] {
+            background-color: #64b5f6;
+            color: #212121;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button[type="button"]:hover {
+            background-color: #1976d2;
+        }
+
+        input[type="submit"] {
+            background-color: #64b5f6;
+            color: #212121;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #1976d2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Nmap UI</h1>
+    <form action="/scan" method="post">
+        <label for="target">Target IP or Hostname:</label><br>
+        <input type="text" id="target" name="target" required><br><br>
+        <label>Scan Options:</label><br>
+        <div class="option-group">
+            <div class="option-row">
+                <div class="option">
+                    <input type="checkbox" id="option_list" name="options" value="-sL">
+                    <label for="option_list">(-sL)<span class="tooltip" onclick="toggleTooltip('list')"></span></label>
+                    <div id="tooltip-list" class="tooltip-content">List targets to scan</div>
+                </div>
+                <div class="option">
+                    <input type="checkbox" id="option_disable_port_scan" name="options" value="-sn">
+                    <label for="option_disable_port_scan">(-sn)<span class="tooltip" onclick="toggleTooltip('disable')"></span></label>
+                    <div id="tooltip-disable" class="tooltip-content">Disable port scan</div>
+                </div>
+                <div class="option">
+                    <input type="checkbox" id="option_all_online" name="options" value="-Pn">
+                    <label for="option_all_online">(-Pn)<span class="tooltip" onclick="toggleTooltip('allonline')"></span></label>
+                    <div id="tooltip-allonline" class="tooltip-content">Treat all hosts as online</div>
+                </div>
+                <div class="option">
+                    <input type="checkbox" id="option_tcp" name="options" value="-sS">
+                    <label for="option_tcp">(-sS)<span class="tooltip" onclick="toggleTooltip('tcp')"></span></label>
+                    <div id="tooltip-tcp" class="tooltip-content">TCP SYN</div>
+                </div>
+                <div class="option">
+                    <input type="checkbox" id="option_tcp" name="options" value="-sT">
+                    <label for="option_tcp">(-sT)<span class="tooltip" onclick="toggleTooltip('tcpconnect')"></span></label>
+                    <div id="tooltip-tcpconnect" class="tooltip-content">TCP Connect Scan</div>
+                </div>
+            </div>
+            <div class="option-row">
+                <div class="option">
+                    <input type="checkbox" id="option_ack" name="options" value="-sA">
+                    <label for="option_ack">(-sA)<span class="tooltip" onclick="toggleTooltip('ack')"></span></label>
+                    <div id="tooltip-ack" class="tooltip-content">ACK Scan</div>
+                </div>
+                <div class="option">
+                    <input type="checkbox" id="option_window" name="options" value="-sW">
+                    <label for="option_window">(-sW)<span class="tooltip" onclick="toggleTooltip('window')"></span></label>
+                    <div id="tooltip-window" class="tooltip-content">Window Scan</div>
+                </div>
+                <div class="option">
+                    <input type="checkbox" id="option_maimon" name="options" value="-sM">
+                    <label for="option_maimon">(-sM)<span class="tooltip" onclick="toggleTooltip('maimon')"></span></label>
+                    <div id="tooltip-maimon" class="tooltip-content">Maimon Scan</div>
+                </div>
+                <div class="option">
+                    <input type="checkbox" id="option_udp" name="options" value="-sU">
+                    <label for="option_udp">(-sU)<span class="tooltip" onclick="toggleTooltip('udp')"></span></label>
+                    <div id="tooltip-udp" class="tooltip-content">UDP Scan</div>
+                </div>
+                <div class="option">
+                    <input type="checkbox" id="option_tcp_null" name="options" value="-sN">
+                    <label for="option_tcp_null">(-sN)<span class="tooltip" onclick="toggleTooltip('tcpnull')"></span></label>
+                    <div id="tooltip-tcpnull" class="tooltip-content">TCP Null Scan</div>
+                </div>
+            </div>
+            <div class="option-row">
+                <div class="option">
+                    <input type="checkbox" id="option_fin" name="options" value="-sF">
+                    <label for="option_fin">(-sF)<span class="tooltip" onclick="toggleTooltip('fin')"></span></label>
+                    <div id="tooltip-fin" class="tooltip-content">FIN Scan</div>
+                </div>
+                <div class="option">
+                    <input type="checkbox" id="option_xmas" name="options" value="-sX">
+                    <label for="option_xmas">(-sX)<span class="tooltip" onclick="toggleTooltip('xmas')"></span></label>
+                    <div id="tooltip-xmas" class="tooltip-content">XMAS Scan</div>
+                </div>
+                <div class="option">
+                    <input type="checkbox" id="option_sctp" name="options" value="-sY">
+                    <label for="option_sctp">(-sY)<span class="tooltip" onclick="toggleTooltip('sctp')"></span></label>
+                    <div id="tooltip-sctp" class="tooltip-content">SCTP INIT scan</div>
+                </div>
+                <div class="option">
+                    <input type="checkbox" id="option_cookie_echo" name="options" value="-sZ">
+                    <label for="option_cookie_echo">(-sZ)<span class="tooltip" onclick="toggleTooltip('cookie')"></span></label>
+                    <div id="tooltip-cookie" class="tooltip-content">Cookie-Echo Scan</div>
+                </div>
+                <div class="option">
+                    <input type="checkbox" id="option_ip" name="options" value="-sO">
+                    <label for="option_ip">(-sO)<span class="tooltip" onclick="toggleTooltip('ip')"></span></label>
+                    <div id="tooltip-ip" class="tooltip-content">IP Protocol Scan</div>
+                </div>
+            </div>
+            <div class="option-row">
+                <div class="option">
+                    <input type="checkbox" id="option_fewer" name="options" value="-F">
+                    <label for="option_fewer">(-F)<span class="tooltip" onclick="toggleTooltip('fewer')"></span></label>
+                    <div id="tooltip-fewer" class="tooltip-content">Scan Fewer Ports</div>
+                </div>
+                <div class="option">
+                    <input type="checkbox" id="option_no_random" name="options" value="-r">
+                    <label for="option_no_random">(-r)<span class="tooltip" onclick="toggleTooltip('random')"></span></label>
+                    <div id="tooltip-random" class="tooltip-content">Scan Ports Sequentially</div>
+                </div>
+                <div class="option">
+                    <input type="checkbox" id="option_probe" name="options" value="-sV">
+                    <label for="option_probe">(-sV)<span class="tooltip" onclick="toggleTooltip('probe')"></span></label>
+                    <div id="tooltip-probe" class="tooltip-content">Probe Open Ports</div>
+                </div>
+                <div class="option">
+                    <input type="checkbox" id="option_os_detect" name="options" value="-O">
+                    <label for="option_os_detect">(-O)<span class="tooltip" onclick="toggleTooltip('os')"></span></label>
+                    <div id="tooltip-os" class="tooltip-content">Enable OS Detection</div>
+                </div>
+                <div class="option">
+                    <input type="checkbox" id="option_time1" name="options" value="-T1">
+                    <label for="option_time1">(-T1)<span class="tooltip" onclick="toggleTooltip('time1')"></span></label>
+                    <div id="tooltip-time1" class="tooltip-content">Timing (higher is faster)</div>
+                </div>
+            </div>
+            <div class="option-row">
+                <div class="option">
+                    <input type="checkbox" id="option_time2" name="options" value="-T2">
+                    <label for="option_time2">(-T2)<span class="tooltip" onclick="toggleTooltip('time2')"></span></label>
+                    <div id="tooltip-time2" class="tooltip-content">Timing</div>
+                </div>
+                <div class="option">
+                    <input type="checkbox" id="option_time3" name="options" value="-T3">
+                    <label for="option_time3">(-T3)<span class="tooltip" onclick="toggleTooltip('time3')"></span></label>
+                    <div id="tooltip-time3" class="tooltip-content">Timing</div>
+                </div>
+                <div class="option">
+                    <input type="checkbox" id="option_time4" name="options" value="-T4">
+                    <label for="option_time4">(-T4)<span class="tooltip" onclick="toggleTooltip('time4')"></span></label>
+                    <div id="tooltip-time4" class="tooltip-content">Timing</div>
+                </div>
+                <div class="option">
+                    <input type="checkbox" id="option_time5" name="options" value="-T5">
+                    <label for="option_time5">(-T5)<span class="tooltip" onclick="toggleTooltip('time5')"></span></label>
+                    <div id="tooltip-time5" class="tooltip-content">Timing</div>
+                </div>
+                <div class="option">
+                    <input type="checkbox" id="option_ipv6" name="options" value="-6">
+                    <label for="option_ipv6">(-6)<span class="tooltip" onclick="toggleTooltip('ipv6')"></span></label>
+                    <div id="tooltip-ipv6" class="tooltip-content">Enable IPv6 Scanning</div>
+                </div>
+            </div>
+            <div class="option-row">
+                <div class="option">
+                    <input type="checkbox" id="option_all" name="options" value="-A">
+                    <label for="option_all">(-A)<span class="tooltip" onclick="toggleTooltip('all')"></span></label>
+                    <div id="tooltip-all" class="tooltip-content">Enable OS, version, script and traceroute scanning</div>
+                </div>
+            </div>
+        </div>
+        
+        <br>
+        <button type="button" onclick="toggleTooltips()">Tooltips</button>
+        <br><br>
+        <input type="submit" value="Scan">
+    </form>
+    
+    <script>
+        function toggleTooltip(option) {
+            var tooltip = document.getElementById('tooltip-' + option);
+            if (tooltip.style.display === 'none' || tooltip.style.display === '') {
+                tooltip.style.display = 'block';
+            } else {
+                tooltip.style.display = 'none';
+            }
+        }
+        
+        function toggleTooltips() {
+            var tooltips = document.getElementsByClassName('tooltip-content');
+            for (var i = 0; i < tooltips.length; i++) {
+                if (tooltips[i].style.display === 'none' || tooltips[i].style.display === '') {
+                    tooltips[i].style.display = 'block';
+                } else {
+                    tooltips[i].style.display = 'none';
+                }
+            }
+        }
+    </script>
+</body>
+</html>
